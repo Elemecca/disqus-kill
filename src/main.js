@@ -7,6 +7,17 @@ import './style.css';
 
 try {
 
+function tmpl (template) {
+    return function (context) {
+        let frag = document.createElement( 'template' );
+        frag.innerHTML = template.apply( null, arguments );
+        return frag.content;
+    }
+}
+
+let tmplPostMenu = tmpl(require( './post-menu-add.hbs' ));
+let tmplPostNotice = tmpl(require( './post-kill-notice.hbs' ));
+
 // add Font Awesome to the page for icons
 let faStyle = document.createElement( 'link' );
 faStyle.setAttribute( 'rel', 'stylesheet' );
@@ -25,33 +36,15 @@ watcher.on( 'post', (post) => {
     console.log( 'post', post.author, post.date, post.body );
     try {
 
-    let button = document.createElement( 'li' );
-    let link = document.createElement( 'a' );
-    link.setAttribute( 'href', '#' );
-    let icon = document.createElement( 'i' );
-    icon.className = "fa fa-ban";
-    link.appendChild( icon );
-    button.appendChild( link );
-
     let menu = post.node.querySelector( '.post-menu' );
-    menu.appendChild( button );
+    menu.appendChild( tmplPostMenu() );
 
     if (killedUsers[ post.author ]) {
         console.log( 'killed', post );
         post.node.classList.add( 'collapsed', 'killed' );
-    
-        var meta = post.node.querySelector( '.post-meta' );
 
-        var bullet = document.createElement( 'span' );
-        bullet.className = "bullet";
-        bullet.appendChild( document.createTextNode( '•' ) );
-        meta.appendChild( bullet );
-
-        var note = document.createElement( 'a' );
-        note.className = "killed-notice";
-        note.setAttribute( 'href', '#' );
-        note.appendChild( document.createTextNode( " killed " ) );
-        meta.appendChild( note );
+        let meta = post.node.querySelector( '.post-meta' );
+        meta.appendChild( tmplPostNotice() );
     }
 
     } catch (caught) {

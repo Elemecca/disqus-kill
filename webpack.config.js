@@ -19,6 +19,9 @@ module.exports = {
             {   test:    /\.css$/,
                 loaders: [ 'style', 'css' ],
             },
+            {   test:   /\.hbs$/,
+                loader: 'handlebars-loader',
+            },
         ],
     },
     plugins: [
